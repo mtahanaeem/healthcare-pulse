@@ -1,0 +1,958 @@
+{
+  "name": "Healthcare Pipeline Orchestrator",
+  "nodes": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Start (Schedule)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Set Extract Running",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"extract\",\"status\":\"running\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "Run WHO Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        750,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/run-scraper/who",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"source\":\"who\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+      "name": "Run OWID Spider",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/run-scraper/owid",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"source\":\"owid\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+      "name": "Run CDC Extractor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1250,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/run-scraper/cdc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"source\":\"cdc\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
+      "name": "Set Extract Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1500,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"extract\",\"status\":\"completed\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "a7b8c9d0-e1f2-3456-abcd-567890123456",
+      "name": "Set ETL Running",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1750,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"etl\",\"status\":\"running\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "b8c9d0e1-f2a3-4567-bcde-678901234567",
+      "name": "Execute KNIME ETL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/run-knime",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "c9d0e1f2-a3b4-5678-cdef-789012345678",
+      "name": "Set ETL Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2250,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"etl\",\"status\":\"completed\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "d0e1f2a3-b4c5-6789-defa-890123456789",
+      "name": "Set Clean Running",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2500,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"clean\",\"status\":\"running\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "e1f2a3b4-c5d6-7890-efab-901234567890",
+      "name": "Run Spark Clean",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2750,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/run-spark-clean",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "f2a3b4c5-d6e7-8901-fabc-012345678901",
+      "name": "Set Clean Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3000,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"clean\",\"status\":\"completed\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "a3b4c5d6-e7f8-9012-abcd-1234567890ab",
+      "name": "Set Warehouse Running",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3250,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"warehouse\",\"status\":\"running\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "b4c5d6e7-f8a9-0123-bcde-234567890abc",
+      "name": "Run Warehouse Load",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3500,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/run-warehouse-load",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "c5d6e7f8-a9b0-1234-cdef-345678901234",
+      "name": "Set Warehouse Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3750,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"warehouse\",\"status\":\"completed\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "d6e7f8a9-b0c1-2345-defa-456789012345",
+      "name": "Set ML Running",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4000,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"ml\",\"status\":\"running\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "e7f8a9b0-c1d2-3456-efab-567890123456",
+      "name": "Run ML Forecast",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4250,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/run-ml-forecast",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "f8a9b0c1-d2e3-4567-fabc-678901234567",
+      "name": "Set ML Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4500,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"ml\",\"status\":\"completed\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "a9b0c1d2-e3f4-5678-abcd-789012345678",
+      "name": "Set Dashboard Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4750,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://flask-api:5000/api/pipeline/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"stage\":\"dashboard\",\"status\":\"completed\"}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "hc-pipeline-api-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "b0c1d2e3-f4a5-6789-bcde-890123456789",
+      "name": "Pipeline Complete",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        5000,
+        300
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Start (Schedule)": {
+      "main": [
+        [
+          {
+            "node": "Set Extract Running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Extract Running": {
+      "main": [
+        [
+          {
+            "node": "Run WHO Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run WHO Scraper": {
+      "main": [
+        [
+          {
+            "node": "Run OWID Spider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run OWID Spider": {
+      "main": [
+        [
+          {
+            "node": "Run CDC Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run CDC Extractor": {
+      "main": [
+        [
+          {
+            "node": "Set Extract Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Extract Complete": {
+      "main": [
+        [
+          {
+            "node": "Set ETL Running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set ETL Running": {
+      "main": [
+        [
+          {
+            "node": "Execute KNIME ETL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute KNIME ETL": {
+      "main": [
+        [
+          {
+            "node": "Set ETL Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set ETL Complete": {
+      "main": [
+        [
+          {
+            "node": "Set Clean Running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Clean Running": {
+      "main": [
+        [
+          {
+            "node": "Run Spark Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Spark Clean": {
+      "main": [
+        [
+          {
+            "node": "Set Clean Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Clean Complete": {
+      "main": [
+        [
+          {
+            "node": "Set Warehouse Running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Warehouse Running": {
+      "main": [
+        [
+          {
+            "node": "Run Warehouse Load",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Warehouse Load": {
+      "main": [
+        [
+          {
+            "node": "Set Warehouse Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Warehouse Complete": {
+      "main": [
+        [
+          {
+            "node": "Set ML Running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set ML Running": {
+      "main": [
+        [
+          {
+            "node": "Run ML Forecast",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run ML Forecast": {
+      "main": [
+        [
+          {
+            "node": "Set ML Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set ML Complete": {
+      "main": [
+        [
+          {
+            "node": "Set Dashboard Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Dashboard Complete": {
+      "main": [
+        [
+          {
+            "node": "Pipeline Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "UTC",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "pinData": {}
+}
