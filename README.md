@@ -116,8 +116,8 @@ CDC ──────┘                                                     �
 
 ```bash
 # Clone repository
-git clone https://github.com/mtahanaeem/pulse-predict.git
-cd pulse-predict
+git clone https://github.com/mtahanaeem/healthcare-pulse.git
+cd healthcare-pulse
 
 # Set up environment (edit .env with your passwords)
 cp .env.example .env
@@ -190,7 +190,7 @@ GROUP BY dd.disease_name, dt.year ORDER BY dd.disease_name, dt.year;
 ## 📁 Project Structure
 
 ```
-pulse-predict/
+healthcare-pulse/
 ├── flask_api/
 │   ├── app.py                 # Flask gateway (15 endpoints)
 │   ├── Dockerfile
